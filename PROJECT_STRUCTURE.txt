@@ -1,0 +1,20 @@
+PROJECT STRUCTURE SUMMARY
+======================
+
+CORE FILES:
+- run_screener.bat              (Double-click to run)
+- screener_dashboard.py        (View results)
+- README.md                     (Full documentation)
+- QUICK_START.txt               (Quick reference)
+- comprehensive_tickers.txt    (23,065 stocks)
+
+SCREENER MODULES:
+- run_explosive_screener.py    (Main entry point)
+- simple_momentum_screener.py  (Momentum detection)
+- catalyst_detector.py         (Catalyst detection)
+- ticker_universe.py           (Stock loader)
+- database.py                  (Results storage)
+- email_alerts.py              (Email notifications)
+- scheduler.py                 (Automation)
+
+See README.md for complete documentation

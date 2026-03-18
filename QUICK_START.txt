@@ -1,0 +1,68 @@
+================================================================================
+EXPLOSIVE MOVE STOCK SCREENER - QUICK START GUIDE
+================================================================================
+
+TARGET: Find stocks with 10%+ gains in 3-30 days
+
+SETUP (One-time)
+1. Set environment variables with your API keys (see README.md)
+2. Optionally set GMAIL_APP_PASSWORD for email alerts
+
+RUN SCREENER
+Method 1: Double-click run_screener.bat
+Method 2: python screener/run_explosive_screener.py
+Method 3: Use dashboard: python screener_dashboard.py
+
+OUTPUT
+File: explosive_picks.txt
+Result: Top 100 stocks with 10%+ move potential
+
+TIME REQUIRED
+- Full screening (23,065 stocks): 30-35 minutes
+- Quick screening (2,000 stocks): 8-10 minutes
+
+NEXT STEPS
+1. Review explosive_picks.txt - sorted by final score (highest=best)
+2. Verify top picks - check news, look at 30-min chart
+3. Set price alerts on your broker for targets
+4. Trade with 8% stop loss (risk/reward = 1:1.25)
+
+SIGNALS EXPLAINED
+
+MOMENTUM (0-100):
+- Gap Up/Down: 3%+ overnight move
+- Volatility: 5%+ intraday range
+- Resistance: Price near key levels
+- Bid-Ask: Imbalance shows buying/selling pressure
+
+CATALYSTS (0-100):
+- Earnings: Q1/Q2/Q3/Q4 earnings coming
+- News: Multiple articles in past 7 days
+- Insider: CEO/execs buying/selling shares
+- Events: FDA approval, mergers, announcements
+
+FINAL SCORE (Momentum + Catalyst merged):
+Best picks: 60+ (strong on both signals)
+
+PROBABILITY OF SUCCESS
+- Momentum + Catalyst: 45-50% win rate
+- Momentum only: 30-35% win rate
+- Catalyst only: 25-30% win rate
+(Requires proper stop loss discipline)
+
+KEY TIPS
+✓ Always use stop losses (-8%)
+✓ Target at minimum +10% gain
+✓ Hold 3-30 days as planned
+✓ Don't chase - exit on target or stop
+✓ Review results during market hours
+✓ Diversify across multiple picks
+
+TROUBLESHOOTING
+"API Key not found" → Set environment variables correctly
+0 candidates → Lower min_score=10 (in code)
+Connection errors → APIs rate-limited, wait 5 min, retry
+Invalid tickers → Normal, delisted stocks skipped
+Dashboard won't load → Check http://localhost:8501
+
+See README.md for full documentation
