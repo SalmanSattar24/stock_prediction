@@ -85,6 +85,42 @@ screener_results.db              ← SQLite database
 | 0 candidates found | Adjust threshold lower (min_score=10) |
 | Errors on specific stock | Stock may be delisted - safe to skip |
 
+## Institutional-Style Free Pipeline (3-30 Days, +10% Target)
+
+This repository now includes a full free pipeline for probability-based swing selection and optional Alpaca paper execution.
+
+### What it adds
+
+- Historical market data caching (`yfinance`) in `market_cache/`
+- Feature engineering for trend/volatility/volume regime features
+- Triple-barrier labels (`+10% take profit / stop loss / 30-day timeout`)
+- Walk-forward model training with calibrated probabilities
+- Portfolio-level risk caps before order placement
+- Optional Alpaca paper execution plan and bracket-like lifecycle via existing position manager
+
+### Run (dry-run by default)
+
+```bash
+python run_institutional_system.py
+```
+
+### Run with Alpaca paper execution
+
+```bash
+python run_institutional_system.py --execute
+```
+
+### Useful options
+
+```bash
+python run_institutional_system.py --universe-size 500 --min-prob 0.60
+```
+
+Generated files:
+- `institutional_ranked_signals.csv`
+- `institutional_validation_report.csv`
+- `institutional_execution_plan.csv`
+
 ---
 
 **Last Updated**: March 15, 2026  

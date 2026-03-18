@@ -107,7 +107,10 @@ class FinalExplosiveMoveScreener:
                 combined[ticker]['catalyst_score'] = c['catalyst_score']
                 combined[ticker]['catalysts'] = c['catalysts'][:2]
                 # Boost score significantly if both momentum AND catalyst
-                combined[ticker]['final_score'] = (m['momentum_score'] * 0.5 + c['catalyst_score'] * 0.5)
+                combined[ticker]['final_score'] = (
+                    combined[ticker]['momentum_score'] * 0.5 +
+                    c['catalyst_score'] * 0.5
+                )
                 combined[ticker]['strategy'] = 'MOMENTUM + CATALYST'
 
         # Sort by final score

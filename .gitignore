@@ -66,3 +66,7 @@ trade_log.json
 CURRENT_STATUS.txt
 explosive_picks.txt
 explosive_picks_optimized.txt
+market_cache/
+institutional_ranked_signals.csv
+institutional_validation_report.csv
+institutional_execution_plan.csv
