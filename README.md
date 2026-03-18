@@ -104,6 +104,10 @@ This repository now includes a full free pipeline for probability-based swing se
 python run_institutional_system.py
 ```
 
+Dry-run now creates a plain-text suggestion file with best picks and buy/sell levels:
+
+- `top_stock_picks.txt`
+
 ### Run with Alpaca paper execution
 
 ```bash
@@ -116,10 +120,17 @@ python run_institutional_system.py --execute
 python run_institutional_system.py --universe-size 500 --min-prob 0.60
 ```
 
+Customize text report output and number of picks (5-10):
+
+```bash
+python run_institutional_system.py --top-picks 8 --report-file my_top_picks.txt
+```
+
 Generated files:
 - `institutional_ranked_signals.csv`
 - `institutional_validation_report.csv`
 - `institutional_execution_plan.csv`
+- `top_stock_picks.txt`
 
 ---
 

@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import os
 from dataclasses import dataclass
+from datetime import datetime
 from typing import Dict, List, Tuple
 
 import pandas as pd
@@ -162,6 +163,64 @@ class InstitutionalSwingSystem:
         pd.DataFrame(actions).to_csv("institutional_execution_plan.csv", index=False)
         return actions
 
+    def generate_top_picks_report(
+        self,
+        ranked: pd.DataFrame,
+        account_equity: float = 100000,
+        top_n: int = 10,
+        output_path: str = "top_stock_picks.txt",
+    ) -> List[Dict]:
+        """
+        Generate text report with best 5-10 stock picks and suggested order levels.
+        This mode does NOT place Alpaca orders.
+        """
+        top_n = max(5, min(10, int(top_n)))
+
+        actions = self.execute_paper_trades(
+            ranked=ranked,
+            account_equity=account_equity,
+            dry_run=True,
+        )
+
+        # Keep only approved candidates first, then fill remaining slots if needed
+        approved = [a for a in actions if a.get("allowed")]
+        selected = approved[:top_n] if len(approved) >= top_n else (approved + [a for a in actions if a not in approved])[:top_n]
+
+        with open(output_path, "w", encoding="utf-8") as f:
+            f.write("TOP SWING STOCK PICKS (ANALYSIS ONLY)\n")
+            f.write("=" * 90 + "\n")
+            f.write(f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+            f.write("Strategy Window: 3-30 days\n")
+            f.write("Target Move: +10%\n")
+            f.write("Execution Mode: NO ORDERS PLACED (suggestions only)\n")
+            f.write("=" * 90 + "\n\n")
+
+            if not selected:
+                f.write("No qualifying picks found for current filters.\n")
+                f.write("Try: larger universe size or lower --min-prob threshold.\n")
+            else:
+                for idx, pick in enumerate(selected, 1):
+                    entry = float(pick["entry_price"])
+                    stop = float(pick["stop_loss"])
+                    take = float(pick["take_profit"])
+                    qty = int(pick["qty"])
+                    prob = float(pick["probability"])
+
+                    buy_low = entry * 0.995
+                    buy_high = entry * 1.005
+
+                    f.write(f"{idx}. {pick['ticker']}\n")
+                    f.write(f"   Probability(+10% before stop/timeout): {prob:.2%}\n")
+                    f.write(f"   Suggested BUY zone: ${buy_low:.2f} - ${buy_high:.2f}\n")
+                    f.write(f"   Suggested BUY limit: ${entry:.2f}\n")
+                    f.write(f"   Suggested SELL take-profit: ${take:.2f}\n")
+                    f.write(f"   Suggested SELL stop-loss: ${stop:.2f}\n")
+                    f.write(f"   Suggested position size: {qty} shares\n")
+                    f.write(f"   Risk check: {'PASS' if pick.get('allowed') else 'REVIEW'} ({pick.get('reason', 'n/a')})\n")
+                    f.write("\n")
+
+        return selected
+
 
 def run_system(dry_run: bool = True):
     system = InstitutionalSwingSystem()
@@ -169,14 +228,24 @@ def run_system(dry_run: bool = True):
     ranked, validation = system.train_and_rank()
     if ranked.empty:
         print("No ranked signals generated. Try increasing universe_size or refreshing cache.")
+        if dry_run:
+            system.generate_top_picks_report(ranked, top_n=10)
+            print("Generated text report: top_stock_picks.txt")
         return
 
     print("\nTop ranked signals:")
     print(ranked.head(15).to_string(index=False))
 
-    actions = system.execute_paper_trades(ranked, dry_run=dry_run)
-    print("\nExecution plan:")
-    print(pd.DataFrame(actions).head(15).to_string(index=False))
+    if dry_run:
+        picks = system.generate_top_picks_report(ranked, top_n=10)
+        print("\nGenerated text report: top_stock_picks.txt")
+        if picks:
+            print("\nTop picks preview:")
+            print(pd.DataFrame(picks).head(10).to_string(index=False))
+    else:
+        actions = system.execute_paper_trades(ranked, dry_run=False)
+        print("\nExecution plan:")
+        print(pd.DataFrame(actions).head(15).to_string(index=False))
 
 
 if __name__ == "__main__":
